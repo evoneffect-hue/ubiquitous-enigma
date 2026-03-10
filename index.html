@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Комплектующие для компьютера</title>
+    <link rel="icon" href="логотип1 .jpg" type="image/x-icon" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Контейнер для уведомлений -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Кнопка "Наверх" -->
+    <button class="back-to-top" onclick="scrollToTop()" title="Наверх">↑</button>
+
+    <!-- Модальное окно авторизации/регистрации -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">×</span>
+            <form id="authForm">
+                <h2 id="modalTitle">Вход в аккаунт</h2>
+                <input type="text" id="username" placeholder="Логин" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Пароль" required>
+                <input type="submit" value="Войти">
+                <div class="switch-mode" onclick="toggleAuthMode()">
+                    У вас нет аккаунта? <strong>Зарегистрироваться</strong>
+                </div>
+            </form>
+            <div id="authMessage" style="text-align:center;margin-top:15px;color:#4CAF50;"></div>
+        </div>
+    </div>
+
+    <!-- Шапка сайта -->
+    <header>
+        <div class="logo" onclick="showCatalog()"><img src="логотип1 .jpg" alt="Логотип" class="logo"></div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showCatalog(); closeMenu();">Каталог</a></li>
+                <li><a href="#" onclick="showAboutPage(); closeMenu();">О нас</a></li>
+                <li><a href="#" onclick="showAdvantages(); closeMenu();">Преимущества</a></li>
+                <li><a href="#" onclick="showFavorites(); closeMenu();">Избранное</a></li>
+            </ul>
+        </nav>
+        <div class="contact-info" id="contactInfo">
+            <span class="phone-number">+7 (495) 123-45-67</span>
+            <button id="login-btn" onclick="openModal()">Войти / Регистрация</button>
+        </div>
+    </header>
+
+    <!-- Основная часть (КАТАЛОГ) -->
+    <main class="catalog-section" id="catalog-section">
+        <h2 id="section-title">Категории:</h2>
+        <div class="category-buttons" id="category-buttons">
+            <button onclick="showCategory('processors')" data-category="processors">Процессоры</button>
+            <button onclick="showCategory('motherboards')" data-category="motherboards">Материнские платы</button>
+            <button onclick="showCategory('graphics-cards')" data-category="graphics-cards">Видеокарты</button>
+            <button onclick="showCategory('ssds')" data-category="ssds">SSD-накопители</button>
+            <button onclick="showCategory('power-supplies')" data-category="power-supplies">Блок питания</button>
+            <button onclick="showCategory('coolers')" data-category="coolers">Кулеры</button>
+            <button onclick="showCategory('monitors')" data-category="monitors">Мониторы</button>
+            <button onclick="showCategory('keyboards')" data-category="keyboards">Клавиатуры</button>
+            <button onclick="showCategory('mice')" data-category="mice">Мышки</button>
+            <button onclick="showCategory('headphones')" data-category="headphones">Наушники</button>
+            <button onclick="showCategory('all')" data-category="all">Все</button>
+            <button id="clear-favorites-btn" class="clear-favorites-btn" onclick="clearAllFavorites()"
+                style="display: none;">Очистить избранное</button>
+        </div>
+
+        <!-- Сообщение об отсутствии избранного -->
+        <div id="noFavoritesMessage" class="no-favorites-message">
+            <p>У вас пока нет избранных товаров.</p>
+            <p>Добавляйте товары в избранное, нажимая на сердечко ♡</p>
+        </div>
+
+        <!-- Секция Преимуществ в каталоге -->
+        <section id="advantages-section" style="display: none;">
+            <h2>Наши преимущества</h2>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">🏆</div>
+                    <h3>Гарантия 2-3 года</h3>
+                    <p>На все товары расширенная гарантия. Быстрый бесплатный ремонт в сервисном центре.</p>
+                    <span class="advantage-tag">Надежность</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">🚚</div>
+                    <h3>Быстрая доставка</h3>
+                    <p>Бесплатная доставка от 10 000₽. В регионы — от 1 дня. Тщательная упаковка.</p>
+                    <span class="advantage-tag">Удобство</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">👨‍💻</div>
+                    <h3>Экспертный подбор</h3>
+                    <p>Поможем собрать ПК под любые задачи. Проверим совместимость компонентов.</p>
+                    <span class="advantage-tag">Профессионализм</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">💰</div>
+                    <h3>Лучшие цены</h3>
+                    <p>Конкурентные цены и акции. Скидки для постоянных клиентов. Рассрочка 0%.</p>
+                    <span class="advantage-tag">Выгода</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">🛠️</div>
+                    <h3>Профессиональная сборка</h3>
+                    <p>Аккуратная сборка с кабельным менеджментом. Тестирование системы под нагрузкой.</p>
+                    <span class="advantage-tag">Качество</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">📞</div>
+                    <h3>Поддержка 24/7</h3>
+                    <p>Круглосуточная техподдержка. Помощь в диагностике. Быстрое реагирование.</p>
+                    <span class="advantage-tag">Забота</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">📦</div>
+                    <h3>Широкий ассортимент</h3>
+                    <p>Более 5000 товаров. Постоянное обновление. Наличие редких моделей.</p>
+                    <span class="advantage-tag">Выбор</span>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">↩️</div>
+                    <h3>Легкий возврат</h3>
+                    <p>Возврат в течение 14 дней. Прозрачные условия. Компенсация при браке.</p>
+                    <span class="advantage-tag">Безопасность</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="back-to-catalog" onclick="showCatalog()">Вернуться в каталог</button>
+            </div>
+        </section>
+
+        <!-- Популярные товары -->
+        <section id="popular-products">
+            <h2>Популярные товары:</h2>
+            <div class="scroll-buttons">
+                <span class="scroll-left" onclick="scrollProducts('popular', -1)">❮</span>
+                <div class="product-list" id="popularProductList">
+
+                    <!-- ПРОЦЕССОРЫ (3 шт) -->
+                    <div class="product-card processors" data-id="processor1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor1","name":"Процессор Intel Core i9-12900K","price":"65000","image":"images/processor-intel-core-i9.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-intel-core-i9.jpg" alt="Intel Core i9">
+                        <h3>Процессор Intel Core i9</h3>
+                        <p>Флагманский процессор для самых требовательных задач.</p>
+                        <strong>Цена: 65000 руб.</strong>
+                    </div>
+                    <div class="product-card processors" data-id="processor2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor2","name":"Процессор AMD Ryzen 7 5800X","price":"38000","image":"images/processor-amd-ryzen-7.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-amd-ryzen-7.jpg" alt="AMD Ryzen 7">
+                        <h3>Процессор AMD Ryzen 7</h3>
+                        <p>Мощный процессор для стриминга и контента.</p>
+                        <strong>Цена: 38000 руб.</strong>
+                    </div>
+                    <div class="product-card processors" data-id="processor3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor3","name":"Процессор Intel Core i7-12700","price":"34500","image":"images/processor-intel-core-i7.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-intel-core-i7.jpg" alt="Intel Core i7">
+                        <h3>Процессор Intel Core i7</h3>
+                        <p>Производительный процессор последнего поколения.</p>
+                        <strong>Цена: 34500 руб.</strong>
+                    </div>
+
+                    <!-- МАТЕРИНСКИЕ ПЛАТЫ (3 шт) -->
+                    <div class="product-card motherboards" data-id="motherboard1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard1","name":"ASUS Prime Z390-A","price":"29990","image":"images/asus-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/asus-motherboard.jpg" alt="ASUS Prime Z390-A">
+                        <h3>ASUS Prime Z390-A</h3>
+                        <p>Высокопроизводительная материнская плата.</p>
+                        <strong>Цена: 29990 руб.</strong>
+                    </div>
+                    <div class="product-card motherboards" data-id="motherboard2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard2","name":"MSI MPG Z490","price":"25500","image":"images/msi-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/msi-motherboard.jpg" alt="MSI MPG Z490">
+                        <h3>MSI MPG Z490</h3>
+                        <p>Материнская плата для геймеров.</p>
+                        <strong>Цена: 25500 руб.</strong>
+                    </div>
+                    <div class="product-card motherboards" data-id="motherboard3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard3","name":"ASRock X570","price":"34000","image":"images/asrock-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/asrock-motherboard.jpg" alt="ASRock X570">
+                        <h3>ASRock X570</h3>
+                        <p>Современная плата с PCI-e 4.0.</p>
+                        <strong>Цена: 34000 руб.</strong>
+                    </div>
+
+                    <!-- ВИДЕОКАРТЫ (3 шт) -->
+                    <div class="product-card graphics-cards" data-id="gpu1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu1","name":"NVIDIA RTX 3080","price":"79990","image":"images/nvidia-gtx-3080.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/nvidia-gtx-3080.jpg" alt="NVIDIA GeForce RTX 3080">
+                        <h3>NVIDIA RTX 3080</h3>
+                        <p>Максимальная производительность для игр.</p>
+                        <strong>Цена: 79990 руб.</strong>
+                    </div>
+                    <div class="product-card graphics-cards" data-id="gpu2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu2","name":"NVIDIA RTX 3070","price":"55800","image":"images/Nvidia-gtx-3070.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/Nvidia-gtx-3070.jpg" alt="NVIDIA GeForce RTX 3070">
+                        <h3>NVIDIA RTX 3070</h3>
+                        <p>Игровая видеокарта с трассировкой лучей.</p>
+                        <strong>Цена: 55800 руб.</strong>
+                    </div>
+                    <div class="product-card graphics-cards" data-id="gpu3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu3","name":"AMD Radeon RX 6800","price":"51000","image":"images/amd-radeon-rx-6800.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/amd-radeon-rx-6800.jpg" alt="AMD Radeon RX 6800">
+                        <h3>AMD Radeon RX 6800</h3>
+                        <p>Высокая производительность в играх.</p>
+                        <strong>Цена: 51000 руб.</strong>
+                    </div>
+
+                    <!-- SSD (3 шт) -->
+                    <div class="product-card ssds" data-id="ssd1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd1","name":"SSD Samsung EVO 970","price":"5700","image":"images/samsung-evo-970.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/samsung-evo-970.jpg" alt="Samsung SSD EVO 970">
+                        <h3>SSD Samsung EVO 970</h3>
+                        <p>Высокая скорость NVMe интерфейса.</p>
+                        <strong>Цена: 5700 руб.</strong>
+                    </div>
+                    <div class="product-card ssds" data-id="ssd2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd2","name":"WD Black SN750","price":"6200","image":"images/western-digital-ssd.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/western-digital-ssd.jpg" alt="Western Digital Black SN750">
+                        <h3>WD Black SN750</h3>
+                        <p>Надежный SSD для игр.</p>
+                        <strong>Цена: 6200 руб.</strong>
+                    </div>
+                    <div class="product-card ssds" data-id="ssd3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd3","name":"SSD Kingston A2000","price":"4500","image":"images/kingston-ssd.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/kingston-ssd.jpg" alt="Kingston A2000">
+                        <h3>SSD Kingston A2000</h3>
+                        <p>Бюджетное решение для скорости.</p>
+                        <strong>Цена: 4500 руб.</strong>
+                    </div>
+
+                    <!-- БЛОКИ ПИТАНИЯ (3 шт) -->
+                    <div class="product-card power-supplies" data-id="psu1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu1","name":"Be Quiet Straight Power 11","price":"12990","image":"images/be-quiet-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/be-quiet-power-supply.jpg" alt="Be Quiet Straight Power 11">
+                        <h3>Be Quiet Straight Power 11</h3>
+                        <p>Тихий блок с Platinum сертификатом.</p>
+                        <strong>Цена: 12990 руб.</strong>
+                    </div>
+                    <div class="product-card power-supplies" data-id="psu2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu2","name":"Corsair RM850x","price":"11500","image":"images/corsair-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/corsair-power-supply.jpg" alt="Corsair RM850x">
+                        <h3>Corsair RM850x</h3>
+                        <p>Надежный блок для игровых систем.</p>
+                        <strong>Цена: 11500 руб.</strong>
+                    </div>
+                    <div class="product-card power-supplies" data-id="psu3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu3","name":"Seasonic Focus GX-750","price":"9800","image":"images/seasonic-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/seasonic-power-supply.jpg" alt="Seasonic Focus GX-750">
+                        <h3>Seasonic Focus GX-750</h3>
+                        <p>Качественный блок с золотым сертификатом.</p>
+                        <strong>Цена: 9800 руб.</strong>
+                    </div>
+
+                    <!-- КУЛЕРЫ (3 шт) -->
+                    <div class="product-card coolers" data-id="cooler1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler1","name":"Noctua NH-D15","price":"8990","image":"images/noctua-nh-d15.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/noctua-nh-d15.jpg" alt="Noctua NH-D15">
+                        <h3>Noctua NH-D15</h3>
+                        <p>Премиум кулер для процессора.</p>
+                        <strong>Цена: 8990 руб.</strong>
+                    </div>
+                    <div class="product-card coolers" data-id="cooler2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler2","name":"Cooler Master Hyper 212","price":"2500","image":"images/cooler-master-hyper-212.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/cooler-master-hyper-212.jpg" alt="Cooler Master Hyper 212">
+                        <h3>Cooler Master Hyper 212</h3>
+                        <p>Популярный недорогой кулер.</p>
+                        <strong>Цена: 2500 руб.</strong>
+                    </div>
+                    <div class="product-card coolers" data-id="cooler3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler3","name":"Be Quiet Dark Rock 4","price":"6800","image":"images/be-quiet-dark-rock-4.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/be-quiet-dark-rock-4.jpg" alt="Be Quiet Dark Rock 4">
+                        <h3>Be Quiet Dark Rock 4</h3>
+                        <p>Тихий кулер для игровых систем.</p>
+                        <strong>Цена: 6800 руб.</strong>
+                    </div>
+
+                    <!-- МОНИТОРЫ (3 шт) -->
+                    <div class="product-card monitors" data-id="monitor1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor1","name":"LG UltraWide 34","price":"35900","image":"images/monitor-lg-ultrawide.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-lg-ultrawide.jpg" alt="LG UltraWide 34">
+                        <h3>LG UltraWide 34"</h3>
+                        <p>Ультраширокий монитор.</p>
+                        <strong>Цена: 35900 руб.</strong>
+                    </div>
+                    <div class="product-card monitors" data-id="monitor2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor2","name":"Samsung 27 UHD","price":"28900","image":"images/monitor-samsung-27.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-samsung-27.jpg" alt="Samsung 27 UHD">
+                        <h3>Samsung 27" UHD</h3>
+                        <p>4K монитор отличной цветопередачи.</p>
+                        <strong>Цена: 28900 руб.</strong>
+                    </div>
+                    <div class="product-card monitors" data-id="monitor3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor3","name":"ASUS Gaming 144Hz","price":"24900","image":"images/monitor-asus-gaming.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-asus-gaming.jpg" alt="ASUS Gaming 144Hz">
+                        <h3>ASUS Gaming 27" 144Hz</h3>
+                        <p>Игровой монитор высокой частоты.</p>
+                        <strong>Цена: 24900 руб.</strong>
+                    </div>
+
+                    <!-- КЛАВИАТУРЫ (3 шт) -->
+                    <div class="product-card keyboards" data-id="keyboard1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard1","name":"Logitech G915","price":"18900","image":"images/keyboard-logitech-g915.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-logitech-g915.jpg" alt="Logitech G915">
+                        <h3>Logitech G915</h3>
+                        <p>Беспроводная механическая клавиатура.</p>
+                        <strong>Цена: 18900 руб.</strong>
+                    </div>
+                    <div class="product-card keyboards" data-id="keyboard2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard2","name":"Razer BlackWidow","price":"14900","image":"images/keyboard-razer-blackwidow.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-razer-blackwidow.jpg" alt="Razer BlackWidow">
+                        <h3>Razer BlackWidow</h3>
+                        <p>Игровая механическая клавиатура RGB.</p>
+                        <strong>Цена: 14900 руб.</strong>
+                    </div>
+                    <div class="product-card keyboards" data-id="keyboard3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard3","name":"Keychron K2","price":"8900","image":"images/keyboard-keychron-k2.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-keychron-k2.jpg" alt="Keychron K2">
+                        <h3>Keychron K2</h3>
+                        <p>Компактная беспроводная клавиатура.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+
+                    <!-- МЫШКИ (3 шт) -->
+                    <div class="product-card mice" data-id="mouse1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse1","name":"Logitech G Pro","price":"8900","image":"images/mouse-logitech-g-pro.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-logitech-g-pro.jpg" alt="Logitech G Pro">
+                        <h3>Logitech G Pro</h3>
+                        <p>Профессиональная игровая мышь.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+                    <div class="product-card mice" data-id="mouse2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse2","name":"Razer DeathAdder V2","price":"7900","image":"images/mouse-razer-deathadder.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-razer-deathadder.jpg" alt="Razer DeathAdder V2">
+                        <h3>Razer DeathAdder V2</h3>
+                        <p>Эргономичная игровая мышь 20K DPI.</p>
+                        <strong>Цена: 7900 руб.</strong>
+                    </div>
+                    <div class="product-card mice" data-id="mouse3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse3","name":"SteelSeries Aerox 3","price":"10900","image":"images/mouse-steelseries-aero.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-steelseries-aero.jpg" alt="SteelSeries Aerox 3">
+                        <h3>SteelSeries Aerox 3</h3>
+                        <p>Сверхлегкая беспроводная мышь.</p>
+                        <strong>Цена: 10900 руб.</strong>
+                    </div>
+
+                    <!-- НАУШНИКИ (3 шт) -->
+                    <div class="product-card headphones" data-id="headphone1" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone1","name":"Sony WH-1000XM4","price":"29900","image":"images/headphones-sony-wh1000xm4.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-sony-wh1000xm4.jpg" alt="Sony WH-1000XM4">
+                        <h3>Sony WH-1000XM4</h3>
+                        <p>Шумоподавление премиум-класса.</p>
+                        <strong>Цена: 29900 руб.</strong>
+                    </div>
+                    <div class="product-card headphones" data-id="headphone2" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone2","name":"HyperX Cloud II","price":"8900","image":"images/headphones-hyperx-cloud.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-hyperx-cloud.jpg" alt="HyperX Cloud II">
+                        <h3>HyperX Cloud II</h3>
+                        <p>Игровые наушники отличным звуком.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+                    <div class="product-card headphones" data-id="headphone3" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone3","name":"Razer BlackShark V2","price":"12900","image":"images/headphones-razer-blackshark.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-razer-blackshark.jpg" alt="Razer BlackShark V2">
+                        <h3>Razer BlackShark V2</h3>
+                        <p>Игровые наушники THX Spatial Audio.</p>
+                        <strong>Цена: 12900 руб.</strong>
+                    </div>
+                </div>
+                <span class="scroll-right" onclick="scrollProducts('popular', 1)">❯</span>
+            </div>
+        </section>
+
+        <!-- Все товары (ПОЛНЫЙ список по 4 в каждой категории) -->
+        <section id="all-products">
+            <h2>Все товары:</h2>
+            <div class="scroll-buttons">
+                <span class="scroll-left" onclick="scrollProducts('all', -1)">❮</span>
+                <div class="product-list" id="allProductList">
+
+                    <!-- ПРОЦЕССОРЫ (4 шт) -->
+                    <div class="product-card processors" data-id="processor4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor4","name":"Процессор Intel Core i7-12700","price":"34500","image":"images/processor-intel-core-i7.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-intel-core-i7.jpg" alt="Intel Core i7">
+                        <h3>Процессор Intel Core i7</h3>
+                        <p>Производительный процессор последнего поколения.</p>
+                        <strong>Цена: 34500 руб.</strong>
+                    </div>
+                    <div class="product-card processors" data-id="processor5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor5","name":"Процессор AMD Ryzen 5 3600","price":"22000","image":"images/processor-amd-ryzen-5.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-amd-ryzen-5.jpg" alt="AMD Ryzen 5">
+                        <h3>Процессор AMD Ryzen 5</h3>
+                        <p>Отличное решение для игр и работы.</p>
+                        <strong>Цена: 22000 руб.</strong>
+                    </div>
+                    <div class="product-card processors" data-id="processor6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor6","name":"Процессор Intel Core i9-12900K","price":"65000","image":"images/processor-intel-core-i9.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-intel-core-i9.jpg" alt="Intel Core i9">
+                        <h3>Процессор Intel Core i9</h3>
+                        <p>Профессиональный процессор для самых требовательных задач.</p>
+                        <strong>Цена: 65000 руб.</strong>
+                    </div>
+                    <div class="product-card processors" data-id="processor7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"processor7","name":"Процессор AMD Ryzen 7 5800X","price":"38000","image":"images/processor-amd-ryzen-7.jpg","category":"processors"}'>♡</button>
+                        <img src="images/processor-amd-ryzen-7.jpg" alt="AMD Ryzen 7">
+                        <h3>Процессор AMD Ryzen 7</h3>
+                        <p>Мощный процессор для стриминга и контента.</p>
+                        <strong>Цена: 38000 руб.</strong>
+                    </div>
+
+                    <!-- МАТЕРИНСКИЕ ПЛАТЫ (4 шт) -->
+                    <div class="product-card motherboards" data-id="motherboard4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard4","name":"Gigabyte B450","price":"12990","image":"images/gigabyte-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/gigabyte-motherboard.jpg" alt="Gigabyte B450">
+                        <h3>Материнская плата Gigabyte B450</h3>
+                        <p>Надежная материнская плата для процессоров AMD Ryzen.</p>
+                        <strong>Цена: 12990 руб.</strong>
+                    </div>
+                    <div class="product-card motherboards" data-id="motherboard5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard5","name":"ASUS Prime Z390-A","price":"29990","image":"images/asus-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/asus-motherboard.jpg" alt="ASUS Prime Z390-A">
+                        <h3>Материнская плата ASUS Prime Z390-A</h3>
+                        <p>Высокопроизводительная материнская плата с поддержкой современных технологий.</p>
+                        <strong>Цена: 29990 руб.</strong>
+                    </div>
+                    <div class="product-card motherboards" data-id="motherboard6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard6","name":"MSI MPG Z490","price":"25500","image":"images/msi-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/msi-motherboard.jpg" alt="MSI MPG Z490">
+                        <h3>Материнская плата MSI MPG Z490</h3>
+                        <p>Материнская плата с расширенными возможностями для геймеров.</p>
+                        <strong>Цена: 25500 руб.</strong>
+                    </div>
+                    <div class="product-card motherboards" data-id="motherboard7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"motherboard7","name":"ASRock X570","price":"34000","image":"images/asrock-motherboard.jpg","category":"motherboards"}'>♡</button>
+                        <img src="images/asrock-motherboard.jpg" alt="ASRock X570">
+                        <h3>Материнская плата ASRock X570</h3>
+                        <p>Современная плата с поддержкой PCI-e 4.0.</p>
+                        <strong>Цена: 34000 руб.</strong>
+                    </div>
+
+                    <!-- ВИДЕОКАРТЫ (4 шт) -->
+                    <div class="product-card graphics-cards" data-id="gpu4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu4","name":"AMD Radeon RX 6700 XT","price":"48500","image":"images/amd-radeon-rx-6700xt.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/amd-radeon-rx-6700xt.jpg" alt="AMD Radeon RX 6700 XT">
+                        <h3>Видеокарта AMD Radeon RX 6700 XT</h3>
+                        <p>Отличное соотношение цены и производительности.</p>
+                        <strong>Цена: 48500 руб.</strong>
+                    </div>
+                    <div class="product-card graphics-cards" data-id="gpu5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu5","name":"NVIDIA GeForce RTX 3070","price":"55800","image":"images/Nvidia-gtx-3070.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/Nvidia-gtx-3070.jpg" alt="NVIDIA GeForce RTX 3070">
+                        <h3>Видеокарта NVIDIA GeForce RTX 3070</h3>
+                        <p>Игровая видеокарта с трассировкой лучей и высокоскоростным GPU.</p>
+                        <strong>Цена: 55800 руб.</strong>
+                    </div>
+                    <div class="product-card graphics-cards" data-id="gpu6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu6","name":"AMD Radeon RX 6800","price":"51000","image":"images/amd-radeon-rx-6800.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/amd-radeon-rx-6800.jpg" alt="AMD Radeon RX 6800">
+                        <h3>Видеокарта AMD Radeon RX 6800</h3>
+                        <p>Альтернативный выбор с высокой производительностью в играх.</p>
+                        <strong>Цена: 51000 руб.</strong>
+                    </div>
+                    <div class="product-card graphics-cards" data-id="gpu7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"gpu7","name":"NVIDIA GeForce RTX 3080","price":"79990","image":"images/nvidia-gtx-3080.jpg","category":"graphics-cards"}'>♡</button>
+                        <img src="images/nvidia-gtx-3080.jpg" alt="NVIDIA GeForce RTX 3080">
+                        <h3>Видеокарта NVIDIA GeForce RTX 3080</h3>
+                        <p>Максимальная производительность для самых требовательных игр.</p>
+                        <strong>Цена: 79990 руб.</strong>
+                    </div>
+
+                    <!-- SSD-НАКОПИТЕЛИ (4 шт) -->
+                    <div class="product-card ssds" data-id="ssd4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd4","name":"SSD Crucial P5","price":"5900","image":"images/crucial-ssd.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/crucial-ssd.jpg" alt="Crucial P5">
+                        <h3>SSD Crucial P5</h3>
+                        <p>Быстрый и надежный SSD.</p>
+                        <strong>Цена: 5900 руб.</strong>
+                    </div>
+                    <div class="product-card ssds" data-id="ssd5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd5","name":"SSD Samsung EVO 970","price":"5700","image":"images/samsung-evo-970.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/samsung-evo-970.jpg" alt="Samsung SSD EVO 970">
+                        <h3>SSD Samsung EVO 970</h3>
+                        <p>Высокая скорость загрузки ОС и приложений благодаря NVMe интерфейсу.</p>
+                        <strong>Цена: 5700 руб.</strong>
+                    </div>
+                    <div class="product-card ssds" data-id="ssd6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd6","name":"SSD Western Digital Black SN750","price":"6200","image":"images/western-digital-ssd.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/western-digital-ssd.jpg" alt="Western Digital Black SN750">
+                        <h3>SSD Western Digital Black SN750</h3>
+                        <p>Надежный SSD для игр и профессиональных задач.</p>
+                        <strong>Цена: 6200 руб.</strong>
+                    </div>
+                    <div class="product-card ssds" data-id="ssd7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"ssd7","name":"SSD Kingston A2000","price":"4500","image":"images/kingston-ssd.jpg","category":"ssds"}'>♡</button>
+                        <img src="images/kingston-ssd.jpg" alt="Kingston A2000">
+                        <h3>SSD Kingston A2000</h3>
+                        <p>Бюджетное решение для повышения скорости компьютера.</p>
+                        <strong>Цена: 4500 руб.</strong>
+                    </div>
+
+                    <!-- БЛОКИ ПИТАНИЯ (4 шт) -->
+                    <div class="product-card power-supplies" data-id="psu4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu4","name":"Блок питания Cooler Master V750","price":"10500","image":"images/cooler-master-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/cooler-master-power-supply.jpg" alt="Cooler Master V750">
+                        <h3>Блок питания Cooler Master V750</h3>
+                        <p>Модульный блок питания для компактных сборок.</p>
+                        <strong>Цена: 10500 руб.</strong>
+                    </div>
+                    <div class="product-card power-supplies" data-id="psu5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu5","name":"Блок питания Be Quiet Straight Power 11","price":"12990","image":"images/be-quiet-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/be-quiet-power-supply.jpg" alt="Be Quiet Power Supply">
+                        <h3>Блок питания Be Quiet Straight Power 11</h3>
+                        <p>Эффективный и тихий блок питания с сертификацией Platinum.</p>
+                        <strong>Цена: 12990 руб.</strong>
+                    </div>
+                    <div class="product-card power-supplies" data-id="psu6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu6","name":"Блок питания Corsair RM850x","price":"11500","image":"images/corsair-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/corsair-power-supply.jpg" alt="Corsair RM850x">
+                        <h3>Блок питания Corsair RM850x</h3>
+                        <p>Высоконадежный блок питания для игровых систем.</p>
+                        <strong>Цена: 11500 руб.</strong>
+                    </div>
+                    <div class="product-card power-supplies" data-id="psu7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"psu7","name":"Блок питания Seasonic Focus GX-750","price":"9800","image":"images/seasonic-power-supply.jpg","category":"power-supplies"}'>♡</button>
+                        <img src="images/seasonic-power-supply.jpg" alt="Seasonic Focus GX-750">
+                        <h3>Блок питания Seasonic Focus GX-750</h3>
+                        <p>Качественный блок питания с золотым сертификатом.</p>
+                        <strong>Цена: 9800 руб.</strong>
+                    </div>
+
+                    <!-- КУЛЕРЫ (4 шт) -->
+                    <div class="product-card coolers" data-id="cooler4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler4","name":"Кулер Arctic Freezer 34","price":"3300","image":"images/arctic-freezer-34.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/arctic-freezer-34.jpg" alt="Arctic Freezer 34">
+                        <h3>Кулер Arctic Freezer 34</h3>
+                        <p>Отличное охлаждение по доступной цене.</p>
+                        <strong>Цена: 3300 руб.</strong>
+                    </div>
+                    <div class="product-card coolers" data-id="cooler5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler5","name":"Кулер Noctua NH-D15","price":"8990","image":"images/noctua-nh-d15.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/noctua-nh-d15.jpg" alt="Noctua NH-D15">
+                        <h3>Кулер Noctua NH-D15</h3>
+                        <p>Эффективный и тихий процессорный кулер премиум-класса.</p>
+                        <strong>Цена: 8990 руб.</strong>
+                    </div>
+                    <div class="product-card coolers" data-id="cooler6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler6","name":"Кулер Cooler Master Hyper 212","price":"2500","image":"images/cooler-master-hyper-212.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/cooler-master-hyper-212.jpg" alt="Cooler Master Hyper 212">
+                        <h3>Кулер Cooler Master Hyper 212</h3>
+                        <p>Популярный и недорогой кулер для процессора.</p>
+                        <strong>Цена: 2500 руб.</strong>
+                    </div>
+                    <div class="product-card coolers" data-id="cooler7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"cooler7","name":"Кулер Be Quiet Dark Rock 4","price":"6800","image":"images/be-quiet-dark-rock-4.jpg","category":"coolers"}'>♡</button>
+                        <img src="images/be-quiet-dark-rock-4.jpg" alt="Be Quiet Dark Rock 4">
+                        <h3>Кулер Be Quiet Dark Rock 4</h3>
+                        <p>Тихий и эффективный кулер для игровых систем.</p>
+                        <strong>Цена: 6800 руб.</strong>
+                    </div>
+
+                    <!-- МОНИТОРЫ (4 шт) -->
+                    <div class="product-card monitors" data-id="monitor4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor4","name":"Монитор Dell 24 FullHD","price":"12900","image":"images/monitor-dell-24.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-dell-24.jpg" alt="Dell 24 FullHD">
+                        <h3>Монитор Dell 24" FullHD</h3>
+                        <p>Надежный монитор для офиса и дома.</p>
+                        <strong>Цена: 12900 руб.</strong>
+                    </div>
+                    <div class="product-card monitors" data-id="monitor5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor5","name":"Монитор Samsung 27 UHD","price":"28900","image":"images/monitor-samsung-27.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-samsung-27.jpg" alt="Samsung 27 UHD">
+                        <h3>Монитор Samsung 27" UHD</h3>
+                        <p>4K монитор с отличной цветопередачей для работы и игр.</p>
+                        <strong>Цена: 28900 руб.</strong>
+                    </div>
+                    <div class="product-card monitors" data-id="monitor6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor6","name":"Монитор LG UltraWide 34","price":"35900","image":"images/monitor-lg-ultrawide.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-lg-ultrawide.jpg" alt="LG UltraWide 34">
+                        <h3>Монитор LG UltraWide 34"</h3>
+                        <p>Ультраширокий монитор для многозадачности.</p>
+                        <strong>Цена: 35900 руб.</strong>
+                    </div>
+                    <div class="product-card monitors" data-id="monitor7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"monitor7","name":"Монитор ASUS Gaming 144Hz","price":"24900","image":"images/monitor-asus-gaming.jpg","category":"monitors"}'>♡</button>
+                        <img src="images/monitor-asus-gaming.jpg" alt="ASUS Gaming 144Hz">
+                        <h3>Монитор ASUS Gaming 27" 144Hz</h3>
+                        <p>Игровой монитор с высокой частотой обновления.</p>
+                        <strong>Цена: 24900 руб.</strong>
+                    </div>
+
+                    <!-- КЛАВИАТУРЫ (4 шт) -->
+                    <div class="product-card keyboards" data-id="keyboard4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard4","name":"Клавиатура Redragon K552","price":"4500","image":"images/keyboard-redragon.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-redragon.jpg" alt="Redragon K552">
+                        <h3>Клавиатура Redragon K552</h3>
+                        <p>Бюджетная механическая клавиатура TKL.</p>
+                        <strong>Цена: 4500 руб.</strong>
+                    </div>
+                    <div class="product-card keyboards" data-id="keyboard5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard5","name":"Клавиатура Logitech G915","price":"18900","image":"images/keyboard-logitech-g915.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-logitech-g915.jpg" alt="Logitech G915">
+                        <h3>Клавиатура Logitech G915</h3>
+                        <p>Беспроводная механическая клавиатура премиум-класса.</p>
+                        <strong>Цена: 18900 руб.</strong>
+                    </div>
+                    <div class="product-card keyboards" data-id="keyboard6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard6","name":"Клавиатура Razer BlackWidow","price":"14900","image":"images/keyboard-razer-blackwidow.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-razer-blackwidow.jpg" alt="Razer BlackWidow">
+                        <h3>Клавиатура Razer BlackWidow</h3>
+                        <p>Игровая механическая клавиатура RGB.</p>
+                        <strong>Цена: 14900 руб.</strong>
+                    </div>
+                    <div class="product-card keyboards" data-id="keyboard7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"keyboard7","name":"Клавиатура Keychron K2","price":"8900","image":"images/keyboard-keychron-k2.jpg","category":"keyboards"}'>♡</button>
+                        <img src="images/keyboard-keychron-k2.jpg" alt="Keychron K2">
+                        <h3>Клавиатура Keychron K2</h3>
+                        <p>Компактная беспроводная клавиатура для работы.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+
+                    <!-- МЫШКИ (4 шт) -->
+                    <div class="product-card mice" data-id="mouse4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse4","name":"Мышь Logitech MX Master 3","price":"12900","image":"images/mouse-logitech-mx-master.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-logitech-mx-master.jpg" alt="Logitech MX Master">
+                        <h3>Мышь Logitech MX Master 3</h3>
+                        <p>Профессиональная мышь для работы и офиса.</p>
+                        <strong>Цена: 12900 руб.</strong>
+                    </div>
+                    <div class="product-card mice" data-id="mouse5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse5","name":"Мышь Logitech G Pro","price":"8900","image":"images/mouse-logitech-g-pro.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-logitech-g-pro.jpg" alt="Logitech G Pro">
+                        <h3>Мышь Logitech G Pro</h3>
+                        <p>Профессиональная игровая мышь с высокой точностью.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+                    <div class="product-card mice" data-id="mouse6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse6","name":"Мышь Razer DeathAdder V2","price":"7900","image":"images/mouse-razer-deathadder.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-razer-deathadder.jpg" alt="Razer DeathAdder">
+                        <h3>Мышь Razer DeathAdder V2</h3>
+                        <p>Эргономичная игровая мышь с оптикой 20K DPI.</p>
+                        <strong>Цена: 7900 руб.</strong>
+                    </div>
+                    <div class="product-card mice" data-id="mouse7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"mouse7","name":"Мышь SteelSeries Aerox 3","price":"10900","image":"images/mouse-steelseries-aero.jpg","category":"mice"}'>♡</button>
+                        <img src="images/mouse-steelseries-aero.jpg" alt="SteelSeries Aerox 3">
+                        <h3>Мышь SteelSeries Aerox 3</h3>
+                        <p>Сверхлегкая беспроводная мышь.</p>
+                        <strong>Цена: 10900 руб.</strong>
+                    </div>
+
+                    <!-- НАУШНИКИ (4 шт) -->
+                    <div class="product-card headphones" data-id="headphone4" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone4","name":"Наушники JBL Quantum 400","price":"6900","image":"images/headphones-jbl-quantum.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-jbl-quantum.jpg" alt="JBL Quantum 400">
+                        <h3>Наушники JBL Quantum 400</h3>
+                        <p>Игровые наушники с RGB подсветкой.</p>
+                        <strong>Цена: 6900 руб.</strong>
+                    </div>
+                    <div class="product-card headphones" data-id="headphone5" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone5","name":"Наушники Sony WH-1000XM4","price":"29900","image":"images/headphones-sony-wh1000xm4.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-sony-wh1000xm4.jpg" alt="Sony WH-1000XM4">
+                        <h3>Наушники Sony WH-1000XM4</h3>
+                        <p>Шумоподавление премиум-класса и 30ч работы.</p>
+                        <strong>Цена: 29900 руб.</strong>
+                    </div>
+                    <div class="product-card headphones" data-id="headphone6" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone6","name":"Наушники HyperX Cloud II","price":"8900","image":"images/headphones-hyperx-cloud.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-hyperx-cloud.jpg" alt="HyperX Cloud II">
+                        <h3>Наушники HyperX Cloud II</h3>
+                        <p>Игровые наушники с отличным звуком.</p>
+                        <strong>Цена: 8900 руб.</strong>
+                    </div>
+                    <div class="product-card headphones" data-id="headphone7" onclick="showProductDetails(this)">
+                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this)"
+                            data-product='{"id":"headphone7","name":"Наушники Razer BlackShark V2","price":"12900","image":"images/headphones-razer-blackshark.jpg","category":"headphones"}'>♡</button>
+                        <img src="images/headphones-razer-blackshark.jpg" alt="Razer BlackShark">
+                        <h3>Наушники Razer BlackShark V2</h3>
+                        <p>Игровые наушники с THX Spatial Audio.</p>
+                        <strong>Цена: 12900 руб.</strong>
+                    </div>
+                </div>
+                <span class="scroll-right" onclick="scrollProducts('all', 1)">❯</span>
+            </div>
+        </section>
+
+        <!-- Избранные товары -->
+        <section id="favorites-section" style="display: none;">
+            <div class="scroll-buttons">
+                <span class="scroll-left" onclick="scrollProducts('favorites', -1)">❮</span>
+                <div class="product-list" id="favoritesProductList">
+                    <!-- Сюда будут динамически добавляться избранные товары -->
+                </div>
+                <span class="scroll-right" onclick="scrollProducts('favorites', 1)">❯</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- СТРАНИЦА ТОВАРА (подробная информация) -->
+    <main class="product-page" id="product-page" onclick="handleProductPageClick(event)">
+        <span class="product-page-close" onclick="showCatalog()">×</span>
+        <div class="product-detail-container" id="productDetailContainer">
+            <!-- Контент будет заполняться динамически через JavaScript -->
+        </div>
+    </main>
+
+    <!-- СТРАНИЦА "О НАС" -->
+    <main class="about-page" id="about-page">
+        <div class="about-header">
+            <h1>О нашем магазине</h1>
+            <p class="subtitle">Мы — ведущий поставщик компьютерных комплектующих с более чем 10-летним опытом работы на
+                рынке. Наша миссия — сделать передовые технологии доступными для каждого.</p>
+        </div>
+
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2>Наша история</h2>
+                <p>Основанный в 2013 году, наш магазин начал свой путь как небольшой магазин комплектующих для ПК.
+                    Сегодня мы превратились в одного из лидеров рынка, обслуживая тысячи клиентов по всей России.</p>
+                <p>Мы верим, что качественные компьютерные компоненты должны быть доступны каждому. Поэтому мы тщательно
+                    отбираем каждого поставщика и каждый продукт, который появляется в нашем каталоге.</p>
+                <p>Наша команда состоит из энтузиастов и профессионалов, которые живут технологиями и готовы помочь
+                    каждому клиенту найти идеальное решение для любых задач.</p>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                    alt="Наш магазин">
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Качество гарантировано</h3>
+                <p>Все товары проходят тщательную проверку перед отправкой. Мы работаем только с проверенными
+                    производителями.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3>Быстрая доставка</h3>
+                <p>Доставляем заказы по всей России от 1 дня. Собственная служба доставки в крупных городах.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Гарантия 2 года</h3>
+                <p>На все товары предоставляем расширенную гарантию. Быстрый и бесплатный сервис по гарантийным случаям.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍💻</div>
+                <h3>Экспертная поддержка</h3>
+                <p>Наши специалисты помогут с подбором компонентов, сборкой и настройкой систем любой сложности.</p>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <h2>Наш путь</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2013</div>
+                    <div class="timeline-text">Основание компании. Открытие первого магазина в Москве.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2015</div>
+                    <div class="timeline-text">Запуск интернет-магазина. Расширение ассортимента до 1000 товаров.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2018</div>
+                    <div class="timeline-text">Открытие собственного сервисного центра. Начало работы с корпоративными
+                        клиентами.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-text">Запуск службы сборки ПК. Достижение отметки в 10 000 довольных клиентов.
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <div class="timeline-text">Расширение складов. Выход на федеральный уровень с доставкой по всей
+                        России.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <h2>Наша команда</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">МР</div>
+                    <div class="member-name">Миша Резаев</div>
+                    <div class="member-role">Основатель и CEO</div>
+                    <div class="member-bio">15 лет в IT-индустрии. Страстный энтузиаст компьютерных технологий.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">МП</div>
+                    <div class="member-name">Мария Петрова</div>
+                    <div class="member-role">Технический директор</div>
+                    <div class="member-bio">Эксперт по сборке ПК. Помогла собрать более 5000 систем.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">ЗЛ</div>
+                    <div class="member-name">Захар Латфуллин</div>
+                    <div class="member-role">Менеджер по закупкам</div>
+                    <div class="member-bio">Обеспечивает лучшие цены и качество от ведущих производителей.</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">ЕВ</div>
+                    <div class="member-name">Елена Волкова</div>
+                    <div class="member-role">Руководитель клиентской поддержки</div>
+                    <div class="member-bio">Всегда на связи, чтобы помочь с любыми вопросами и проблемами.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contacts-section">
+            <h2>Свяжитесь с нами</h2>
+            <div class="contact-info-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-text">
+                        <h4>Телефон</h4>
+                        <p>+7 (495) 123-45-67</p>
+                        <p>Ежедневно с 9:00 до 21:00</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text">
+                        <h4>Email</h4>
+                        <p>zaharlatfullin8@gmail.com</p>
+                        <p>Для общих вопросов</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🏢</div>
+                    <div class="contact-text">
+                        <h4>Офис</h4>
+                        <p>Кемерово, ул. Павленко, 1А</p>
+                        <p>Пн-Пт с 10:00 до 19:00</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🚚</div>
+                    <div class="contact-text">
+                        <h4>Доставка</h4>
+                        <p>По всей России</p>
+                    </div>
+                </div>
+            </div>
+            <button class="back-to-catalog" onclick="showCatalog()">Вернуться в каталог</button>
+        </section>
+    </main>
+
+    <!-- Подвал сайта -->
+    <footer>
+        <p>© Магазин Компьютерных Комплектующих, 2026 г.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
